@@ -136,118 +136,164 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   List<Item> item = [];
+
+  List<Item> startItem = [];
   TextEditingController nameCtr = TextEditingController();
   TextEditingController meetPointctr = TextEditingController();
   TextEditingController purposeCtr = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          button("Checkin", () {
-            DialogWidget()
-                .dialogWidget(navigatorKey.currentContext!, "Check-in", () {
-              nameCtr.clear();
-              purposeCtr.clear();
-              meetPointctr.clear();
-              navigatorKey.currentState?.pop();
-            }, () {
-              navigatorKey.currentState?.pop();
-              checkinstartModel = CheckinstartModel(
-                  id: "00000000-0000-0000-0000-000000000000",
-                  userId: "no",
-                  date:
-                      "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                  checkInTime:
-                      "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                  isCheckIn: true,
-                  isCheckOut: false,
-                  customerName: nameCtr.text,
-                  meetingPoints: "start",
-                  checkOutTime:
-                      "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                  purpose: purposeCtr.text,
-                  checkOutLatitude: 0,
-                  checkOutLongitude: 0,
-                  checkInLatitude: lat,
-                  checkInLongitude: long);
-              kmsBloc.add(AddVisitsEvent(checkinstartModel));
-            },
-                    notefield: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // const TextWidget("Meeting Points"),
-                        // TextFormField(
-                        //   controller: meetPointctr,
-                        //   maxLines: 2,
-                        //   decoration: InputDecoration(
-                        //     border: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(5.0),
-                        //       borderSide: const BorderSide(
-                        //         color: Colors.grey,
-                        //       ),
-                        //     ),
-                        //     focusedBorder: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(5.0),
-                        //       borderSide: BorderSide(
-                        //         color: HexColor("#135a92"),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 5.w),
-                          child: const TextWidget("Customer name"),
-                        ),
-                        TextFormField(
-                          controller: nameCtr,
-                          maxLines: 1,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: HexColor("#135a92"),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10.w,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 5.w),
-                          child: const TextWidget("Purpose"),
-                        ),
-                        TextFormField(
-                          maxLines: 1,
-                          controller: purposeCtr,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: HexColor("#135a92"),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ));
-          }, HexColor("#135a92")),
-          button("End", () {}, Colors.red)
-        ]),
+      bottomNavigationBar: BlocBuilder<KmsBloc, KmsState>(
+        builder: (context, state) {
+          if (state is VisitsDone) {
+            startItem = state.visits.item
+                .where(
+                    (element) => element.customerName.toLowerCase() == "start")
+                .toList();
+            return (startItem.isNotEmpty && startItem[0].isCheckOut == false)
+                ? BottomAppBar(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          button("Checkin", () {
+                            DialogWidget().dialogWidget(
+                                navigatorKey.currentContext!, "Check-in", () {
+                              nameCtr.clear();
+                              purposeCtr.clear();
+                              meetPointctr.clear();
+                              navigatorKey.currentState?.pop();
+                            }, () {
+                              navigatorKey.currentState?.pop();
+                              checkinstartModel = CheckinstartModel(
+                                  id: "00000000-0000-0000-0000-000000000000",
+                                  userId: "no",
+                                  date:
+                                      "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                                  checkInTime:
+                                      "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                                  isCheckIn: true,
+                                  isCheckOut: false,
+                                  customerName: nameCtr.text,
+                                  meetingPoints: "start",
+                                  checkOutTime:
+                                      "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                                  purpose: purposeCtr.text,
+                                  checkOutLatitude: 0,
+                                  checkOutLongitude: 0,
+                                  checkInLatitude: lat,
+                                  checkInLongitude: long);
+                              kmsBloc.add(AddVisitsEvent(checkinstartModel));
+                            },
+                                notefield: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // const TextWidget("Meeting Points"),
+                                    // TextFormField(
+                                    //   controller: meetPointctr,
+                                    //   maxLines: 2,
+                                    //   decoration: InputDecoration(
+                                    //     border: OutlineInputBorder(
+                                    //       borderRadius: BorderRadius.circular(5.0),
+                                    //       borderSide: const BorderSide(
+                                    //         color: Colors.grey,
+                                    //       ),
+                                    //     ),
+                                    //     focusedBorder: OutlineInputBorder(
+                                    //       borderRadius: BorderRadius.circular(5.0),
+                                    //       borderSide: BorderSide(
+                                    //         color: HexColor("#135a92"),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5.w),
+                                      child: const TextWidget("Customer name"),
+                                    ),
+                                    TextFormField(
+                                      controller: nameCtr,
+                                      maxLines: 1,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          borderSide: BorderSide(
+                                            color: HexColor("#135a92"),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10.w,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5.w),
+                                      child: const TextWidget("Purpose"),
+                                    ),
+                                    TextFormField(
+                                      maxLines: 1,
+                                      controller: purposeCtr,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          borderSide: const BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          borderSide: BorderSide(
+                                            color: HexColor("#135a92"),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ));
+                          }, HexColor("#135a92")),
+                          button("End", () {
+                            checkinstartModel = CheckinstartModel(
+                              id: startItem[0].id,
+                              userId: startItem[0].userId,
+                              date:
+                                  "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                              checkInTime: startItem[0].checkInTime,
+                              isCheckIn: true,
+                              isCheckOut: true,
+                              customerName: startItem[0].customerName,
+                              meetingPoints: meetPointctr.text,
+                              checkOutTime:
+                                  "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                              purpose: startItem[0].purpose,
+                              checkOutLatitude: lat,
+                              checkOutLongitude: long,
+                              checkInLatitude: startItem[0].checkInLatitude,
+                              checkInLongitude: startItem[0].checkInLongitude,
+                            );
+                            kmsBloc.add(AddVisitsEvent(checkinstartModel,
+                                checkin: false));
+                          }, Colors.red)
+                        ]),
+                  )
+                : Container(
+                    height: 1,
+                  );
+          }
+          return Container(
+            height: 1,
+          );
+        },
       ),
       appBar: AppBar(
         leadingWidth: 160.w,
@@ -268,6 +314,11 @@ class _IntroScreenState extends State<IntroScreen> {
         actions: const [LogoutWidget()],
       ),
       body: BlocBuilder<KmsBloc, KmsState>(
+        buildWhen: (previous, current) {
+          return current is VisitsLoad ||
+              current is VisitsDone ||
+              current is VisitsError;
+        },
         builder: (context, state) {
           if (state is VisitsLoad) {
             return const Center(child: CircularProgressIndicator());
@@ -277,115 +328,143 @@ class _IntroScreenState extends State<IntroScreen> {
                 .where(
                     (element) => element.customerName.toLowerCase() != "start")
                 .toList();
-            return item.isEmpty
-                ? const Center(child: TextWidget("No checkin"))
-                : ListView.builder(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.w, horizontal: 10.w),
-                    itemCount: item.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: item[index].isCheckIn == true &&
-                                item[index].isCheckOut == true
-                            ? null
-                            : () {
-                                DialogWidget().dialogWidget(
-                                    navigatorKey.currentContext!, "Check-out",
-                                    () {
-                                  nameCtr.clear();
-                                  purposeCtr.clear();
-                                  meetPointctr.clear();
-                                  navigatorKey.currentState?.pop();
-                                }, () {
-                                  navigatorKey.currentState?.pop();
-                                  checkinstartModel = CheckinstartModel(
-                                    id: item[index].id,
-                                    userId: item[index].userId,
-                                    date:
-                                        "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                                    checkInTime: item[index].checkInTime,
-                                    isCheckIn: false,
-                                    isCheckOut: true,
-                                    customerName: item[index].customerName,
-                                    meetingPoints: meetPointctr.text,
-                                    checkOutTime:
-                                        "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                                    purpose: item[index].purpose,
-                                    checkOutLatitude: lat,
-                                    checkOutLongitude: long,
-                                    checkInLatitude:
-                                        item[index].checkInLatitude,
-                                    checkInLongitude:
-                                        item[index].checkInLongitude,
-                                  );
-                                  kmsBloc.add(AddVisitsEvent(checkinstartModel,
-                                      checkin: false));
-                                },
-                                    notefield: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const TextWidget("Meeting Points"),
-                                        SizedBox(
-                                          height: 10.w,
-                                        ),
-                                        TextFormField(
-                                          controller: meetPointctr,
-                                          maxLines: 2,
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              borderSide: const BorderSide(
-                                                color: Colors.grey,
+            if (state.visits.item.isNotEmpty) {
+              return item.isEmpty
+                  ? const Center(child: TextWidget("No checkin"))
+                  : ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.w, horizontal: 10.w),
+                      itemCount: item.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: item[index].isCheckIn == true &&
+                                  item[index].isCheckOut == true
+                              ? null
+                              : () {
+                                  DialogWidget().dialogWidget(
+                                      navigatorKey.currentContext!, "Check-out",
+                                      () {
+                                    nameCtr.clear();
+                                    purposeCtr.clear();
+                                    meetPointctr.clear();
+                                    navigatorKey.currentState?.pop();
+                                  }, () {
+                                    navigatorKey.currentState?.pop();
+                                    checkinstartModel = CheckinstartModel(
+                                      id: item[index].id,
+                                      userId: item[index].userId,
+                                      date:
+                                          "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                                      checkInTime: item[index].checkInTime,
+                                      isCheckIn: false,
+                                      isCheckOut: true,
+                                      customerName: item[index].customerName,
+                                      meetingPoints: meetPointctr.text,
+                                      checkOutTime:
+                                          "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                                      purpose: item[index].purpose,
+                                      checkOutLatitude: lat,
+                                      checkOutLongitude: long,
+                                      checkInLatitude:
+                                          item[index].checkInLatitude,
+                                      checkInLongitude:
+                                          item[index].checkInLongitude,
+                                    );
+                                    kmsBloc.add(AddVisitsEvent(
+                                        checkinstartModel,
+                                        checkin: false));
+                                  },
+                                      notefield: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const TextWidget("Meeting Points"),
+                                          SizedBox(
+                                            height: 10.w,
+                                          ),
+                                          TextFormField(
+                                            controller: meetPointctr,
+                                            maxLines: 2,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                borderSide: const BorderSide(
+                                                  color: Colors.grey,
+                                                ),
                                               ),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              borderSide: BorderSide(
-                                                color: HexColor("#135a92"),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                borderSide: BorderSide(
+                                                  color: HexColor("#135a92"),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ));
-                              },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: item[index].isCheckIn &&
-                                      item[index].isCheckOut
-                                  ? Colors.grey.shade300
-                                  : HexColor("#135a92").withOpacity(0.4),
-                              borderRadius: BorderRadius.circular(10.w)),
-                          margin: EdgeInsets.symmetric(vertical: 5.w),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 10.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                  child: TextWidget(
-                                item[index].customerName,
-                                fontweight: FontWeight.bold,
-                              )),
-                              SizedBox(
-                                height: 5.w,
-                              ),
-                              Row(
-                                children: [
-                                  const TextWidget("Purpose : "),
-                                  TextWidget(item[index].purpose)
-                                ],
-                              )
-                            ],
+                                        ],
+                                      ));
+                                },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: item[index].isCheckIn &&
+                                        item[index].isCheckOut
+                                    ? Colors.grey.shade300
+                                    : HexColor("#135a92").withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(10.w)),
+                            margin: EdgeInsets.symmetric(vertical: 5.w),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.w, vertical: 10.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    child: TextWidget(
+                                  item[index].customerName,
+                                  fontweight: FontWeight.bold,
+                                )),
+                                SizedBox(
+                                  height: 5.w,
+                                ),
+                                Row(
+                                  children: [
+                                    const TextWidget("Purpose : "),
+                                    TextWidget(item[index].purpose)
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
+                        );
+                      },
+                    );
+            } else {
+              return Center(
+                child: button("Start", () {
+                  print("$lat = $long");
+                  checkinstartModel = CheckinstartModel(
+                      id: "00000000-0000-0000-0000-000000000000",
+                      userId: "no",
+                      date:
+                          "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                      checkInTime:
+                          "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                      isCheckIn: true,
+                      isCheckOut: false,
+                      customerName: "start",
+                      meetingPoints: "start",
+                      checkOutTime:
+                          "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                      purpose: "start",
+                      checkOutLatitude: 0,
+                      checkOutLongitude: 0,
+                      checkInLatitude: lat,
+                      checkInLongitude: long);
+                  kmsBloc.add(AddVisitsEvent(checkinstartModel));
+                }, Colors.green),
+              );
+            }
           }
           return Center(
             child: button("Start", () {
