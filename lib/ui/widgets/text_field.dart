@@ -38,7 +38,7 @@ class CustomFormField extends StatelessWidget {
           margin: EdgeInsets.only(left: 35.sp, right: 35.sp, bottom: 10.sp),
           child: TextWidget(
             headingText,
-            color: Colors.white,
+            color: Colors.black,
             size: 19.sp,
             fontweight: FontWeight.w500,
           ),
@@ -57,7 +57,7 @@ class CustomFormField extends StatelessWidget {
             textInputAction: textInputAction,
             keyboardType: textInputType,
             obscureText: obsecureText,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.black),
             decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),

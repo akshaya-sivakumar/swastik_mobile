@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,7 +17,6 @@ import '../../bloc/login/login_state.dart';
 import '../../route_generator.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/text_field.dart';
-import '../widgets/text_widget.dart';
 
 class Signin extends StatefulWidget {
   const Signin({Key? key}) : super(key: key);
@@ -103,52 +101,49 @@ class _SigninState extends State<Signin> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 30.w),
-                height: MediaQuery.of(context).size.height * 0.18,
-                width: 100,
-                child: Image.asset(
-                  "assets/appLogo.png",
-                  fit: BoxFit.fill,
-                ),
-              ),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                      color: HexColor("#135a92"),
+                      // color: HexColor("#135a92"),
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(100.w),
                           topRight: Radius.circular(100.w))),
                   child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 100.w, horizontal: 30.w),
-                          child: TextWidget(
-                            "LOGIN",
-                            color: HexColor("#434344"),
-                            style: GoogleFonts.sono(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 50.w,
-                                color: Colors.white,
-                                shadows: [
-                                  const Shadow(
-                                    offset: Offset(3, 0),
-                                    blurRadius: 10.0,
-                                    color: Colors.black,
-                                  ),
-                                  const Shadow(
-                                    offset: Offset(3, 0),
-                                    blurRadius: 10.0,
-                                    color: Colors.black,
-                                  ),
-                                ]),
+                        SizedBox(
+                          child: Image.asset(
+                            "assets/appLogo.png",
+                            fit: BoxFit.fill,
                           ),
                         ),
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(
+                        //       vertical: 100.w, horizontal: 30.w),
+                        //   child: TextWidget(
+                        //     "LOGIN",
+                        //     color: HexColor("#434344"),
+                        //     style: GoogleFonts.sono(
+                        //         fontWeight: FontWeight.bold,
+                        //         fontSize: 50.w,
+                        //         color: HexColor("#135a92"),
+                        //         shadows: [
+                        //           const Shadow(
+                        //             offset: Offset(3, 0),
+                        //             blurRadius: 10.0,
+                        //             color: Colors.black,
+                        //           ),
+                        //           const Shadow(
+                        //             offset: Offset(3, 0),
+                        //             blurRadius: 10.0,
+                        //             color: Colors.black,
+                        //           ),
+                        //         ]),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 24.w,
                         ),
@@ -216,8 +211,8 @@ class _SigninState extends State<Signin> {
                             }
                           },
                           text: "SIGN IN",
-                          color: Colors.white,
-                          fontColor: HexColor("#135a92"),
+                          color: HexColor("#135a92"),
+                          fontColor: Colors.white,
                           fontweight: FontWeight.bold,
                           fontsize: 20.sp,
                         )

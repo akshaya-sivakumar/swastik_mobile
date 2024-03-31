@@ -8,7 +8,7 @@ import 'button.dart';
 class DialogWidget {
   Future<dynamic> dialogWidget(BuildContext cxt, String title,
       Function()? cancelPress, Function()? okPress,
-      {Widget? notefield}) {
+      {Widget? notefield, String? okText}) {
     return showDialog(
       context: navigatorKey.currentContext!,
       builder: (context) {
@@ -27,7 +27,7 @@ class DialogWidget {
               Colors.red.shade900,
             ),
             button(
-              "OK",
+              okText ?? "OK",
               okPress,
               Colors.green.shade800,
             )
