@@ -22,12 +22,12 @@ class CheckinstartModel {
   String? purpose;
   String? meetingPoints;
   bool? isCheckIn;
-  int? checkInLatitude;
-  int? checkInLongitude;
+  double? checkInLatitude;
+  double? checkInLongitude;
   String? checkInTime;
   bool? isCheckOut;
-  int? checkOutLatitude;
-  int? checkOutLongitude;
+  double? checkOutLatitude;
+  double? checkOutLongitude;
   String? checkOutTime;
 
   CheckinstartModel.fromJson(Map<String, dynamic> json) {

@@ -98,8 +98,8 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   String? currentAddress;
-  int lat = 0;
-  int long = 0;
+  double lat = 0;
+  double long = 0;
 
   Future _getAddressFromLatLng(Position position) async {
     await placemarkFromCoordinates(position.latitude, position.longitude)
@@ -119,10 +119,10 @@ class _IntroScreenState extends State<IntroScreen> {
       currentAddress =
           '${place.street}, ${place.locality},$district,${place.administrativeArea},${place.country}, ${place.postalCode}';
 
-      checkinstartModel.checkInLatitude = position.latitude.toInt();
-      checkinstartModel.checkInLongitude = position.longitude.toInt();
-      lat = position.latitude.toInt();
-      long = position.longitude.toInt();
+      checkinstartModel.checkInLatitude = position.latitude;
+      checkinstartModel.checkInLongitude = position.longitude;
+      lat = position.latitude;
+      long = position.longitude;
 
       setState(() {});
       print(checkinstartModel.checkInLongitude);

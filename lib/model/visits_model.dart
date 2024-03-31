@@ -55,13 +55,13 @@ class Item {
   late final String purpose;
   late final String meetingPoints;
   late final bool isCheckIn;
-  late final int checkInLatitude;
-  late final int checkInLongitude;
+  late final double checkInLatitude;
+  late final double checkInLongitude;
   late final String checkInTime;
   late final String checkInTimeAsString;
   late final bool isCheckOut;
-  late final int checkOutLatitude;
-  late final int checkOutLongitude;
+  late final double checkOutLatitude;
+  late final double checkOutLongitude;
   late final String checkOutTime;
   late final String checkOutTimeAsString;
 
@@ -74,13 +74,17 @@ class Item {
     purpose = json['purpose'];
     meetingPoints = json['meetingPoints'];
     isCheckIn = json['isCheckIn'];
-    checkInLatitude = json['checkInLatitude'];
-    checkInLongitude = json['checkInLongitude'];
+    checkInLatitude =
+        double.tryParse(json['checkInLatitude'].toString()) ?? 0.0;
+    checkInLongitude =
+        double.tryParse(json['checkInLongitude'].toString()) ?? 0.0;
     checkInTime = json['checkInTime'];
     checkInTimeAsString = json['checkInTimeAsString'];
     isCheckOut = json['isCheckOut'];
-    checkOutLatitude = json['checkOutLatitude'];
-    checkOutLongitude = json['checkOutLongitude'];
+    checkOutLatitude =
+        double.tryParse(json['checkOutLatitude'].toString()) ?? 0.0;
+    checkOutLongitude =
+        double.tryParse(json['checkOutLongitude'].toString()) ?? 0.0;
     checkOutTime = json['checkOutTime'] ?? "";
     checkOutTimeAsString = json['checkOutTimeAsString'];
   }
