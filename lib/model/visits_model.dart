@@ -46,6 +46,8 @@ class Item {
     required this.checkOutLongitude,
     required this.checkOutTime,
     required this.checkOutTimeAsString,
+    required this.startKm,
+    required this.endKm,
   });
   late final String id;
   late final String userId;
@@ -64,6 +66,8 @@ class Item {
   late final double checkOutLongitude;
   late final String checkOutTime;
   late final String checkOutTimeAsString;
+  late final int startKm;
+  late final int endKm;
 
   Item.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -87,6 +91,8 @@ class Item {
         double.tryParse(json['checkOutLongitude'].toString()) ?? 0.0;
     checkOutTime = json['checkOutTime'] ?? "";
     checkOutTimeAsString = json['checkOutTimeAsString'];
+    startKm = json['startKm'] ?? "";
+    endKm = json['endKm'];
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +114,8 @@ class Item {
     datas['checkOutLongitude'] = checkOutLongitude;
     datas['checkOutTime'] = checkOutTime;
     datas['checkOutTimeAsString'] = checkOutTimeAsString;
+    datas['startKm'] = startKm;
+    datas['endKm'] = endKm;
     return datas;
   }
 }

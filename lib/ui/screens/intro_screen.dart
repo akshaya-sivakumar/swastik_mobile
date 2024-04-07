@@ -28,6 +28,8 @@ class IntroScreen extends StatefulWidget {
 class _IntroScreenState extends State<IntroScreen> {
   KmsBloc kmsBloc = KmsBloc();
   CheckinstartModel checkinstartModel = CheckinstartModel();
+  final startKey = GlobalKey<FormState>();
+  final endKey = GlobalKey<FormState>();
   @override
   void initState() {
     kmsBloc = BlocProvider.of(context)
@@ -42,6 +44,8 @@ class _IntroScreenState extends State<IntroScreen> {
           nameCtr.clear();
           purposeCtr.clear();
           meetPointctr.clear();
+          startKm.clear();
+          endKm.clear();
           kmsBloc.add(FetchVisitsEvent());
         } else if (event is AddError) {
           EasyLoading.showError('Failed with Error');
@@ -80,6 +84,9 @@ class _IntroScreenState extends State<IntroScreen> {
     }
     return true;
   }
+
+  TextEditingController startKm = TextEditingController();
+  TextEditingController endKm = TextEditingController();
 
   Future<void> _getCurrentPosition() async {
     final hasPermission = await _handleLocationPermission();
@@ -145,6 +152,11 @@ class _IntroScreenState extends State<IntroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BlocBuilder<KmsBloc, KmsState>(
+        buildWhen: (previous, current) {
+          return current is VisitsLoad ||
+              current is VisitsDone ||
+              current is VisitsError;
+        },
         builder: (context, state) {
           if (state is VisitsDone) {
             startItem = state.visits.item
@@ -187,7 +199,9 @@ class _IntroScreenState extends State<IntroScreen> {
                                     checkOutLatitude: 0,
                                     checkOutLongitude: 0,
                                     checkInLatitude: lat,
-                                    checkInLongitude: long);
+                                    checkInLongitude: long,
+                                    startKm: 0,
+                                    endKm: 0);
                                 kmsBloc.add(AddVisitsEvent(checkinstartModel));
                               }, okText: "Check-In");
                             },
@@ -269,34 +283,6 @@ class _IntroScreenState extends State<IntroScreen> {
                                 ),
                                 okText: "Submit");
                           }, HexColor("#135a92")),
-                          button("End", () {
-                            DialogWidget().dialogWidget(
-                                navigatorKey.currentContext!,
-                                "Are you sure you want to end?",
-                                () => navigatorKey.currentState?.pop(), () {
-                              navigatorKey.currentState?.pop();
-                              checkinstartModel = CheckinstartModel(
-                                id: startItem[0].id,
-                                userId: startItem[0].userId,
-                                date:
-                                    "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                                checkInTime: startItem[0].checkInTime,
-                                isCheckIn: true,
-                                isCheckOut: true,
-                                customerName: startItem[0].customerName,
-                                meetingPoints: meetPointctr.text,
-                                checkOutTime:
-                                    "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                                purpose: startItem[0].purpose,
-                                checkOutLatitude: lat,
-                                checkOutLongitude: long,
-                                checkInLatitude: startItem[0].checkInLatitude,
-                                checkInLongitude: startItem[0].checkInLongitude,
-                              );
-                              kmsBloc.add(AddVisitsEvent(checkinstartModel,
-                                  checkin: false));
-                            }, okText: "End");
-                          }, Colors.red)
                         ]),
                   )
                 : Container(
@@ -337,10 +323,10 @@ class _IntroScreenState extends State<IntroScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is VisitsDone) {
-            item = state.visits.item
-                .where(
-                    (element) => element.customerName.toLowerCase() != "start")
-                .toList();
+            item = state.visits.item;
+            //     .where(
+            //         (element) => element.customerName.toLowerCase() != "start")
+            //   .toList();
             if (state.visits.item.isNotEmpty) {
               return item.isEmpty
                   ? const Center(child: TextWidget("No checkin"))
@@ -440,20 +426,195 @@ class _IntroScreenState extends State<IntroScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                    child: TextWidget(
-                                  item[index].customerName,
-                                  fontweight: FontWeight.bold,
-                                )),
-                                SizedBox(
-                                  height: 5.w,
-                                ),
-                                Row(
-                                  children: [
-                                    const TextWidget("Purpose : "),
-                                    TextWidget(item[index].purpose)
-                                  ],
-                                )
+                                if (index != 0)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const TextWidget("Customer Name : "),
+                                          TextWidget(
+                                            item[index].customerName,
+                                            fontweight: FontWeight.bold,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 5.w,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const TextWidget("Purpose : "),
+                                              TextWidget(item[index].purpose)
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const TextWidget("Date : "),
+                                              TextWidget(
+                                                DateFormat("dd-MM-yyyy hh:mm a")
+                                                    .format(DateTime.parse(
+                                                            item[index]
+                                                                .checkInTime)
+                                                        .toLocal()),
+                                                fontweight: FontWeight.bold,
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                if (index == 0)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const TextWidget(
+                                        "Started",
+                                        fontweight: FontWeight.bold,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const TextWidget("Date : "),
+                                              TextWidget(
+                                                DateFormat("dd-MM-yyyy hh:mm a")
+                                                    .format(DateTime.parse(
+                                                            item[index]
+                                                                .checkInTime)
+                                                        .toLocal()),
+                                                fontweight: FontWeight.bold,
+                                              ),
+                                            ],
+                                          ),
+                                          if (startItem[0].isCheckOut == false)
+                                            button("End", () {
+                                              DialogWidget().dialogWidget(
+                                                navigatorKey.currentContext!,
+                                                "Enter End Km",
+                                                () {
+                                                  navigatorKey.currentState
+                                                      ?.pop();
+
+                                                  endKm.clear();
+                                                },
+                                                () {
+                                                  if (endKey.currentState
+                                                          ?.validate() ??
+                                                      false) {
+                                                    DialogWidget().dialogWidget(
+                                                        navigatorKey
+                                                            .currentContext!,
+                                                        "Are you sure you want to end?",
+                                                        () => navigatorKey
+                                                            .currentState
+                                                            ?.pop(), () {
+                                                      navigatorKey.currentState
+                                                          ?.pop();
+                                                      checkinstartModel = CheckinstartModel(
+                                                          id: startItem[0].id,
+                                                          userId: startItem[0]
+                                                              .userId,
+                                                          date:
+                                                              "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                                                          checkInTime:
+                                                              startItem[0]
+                                                                  .checkInTime,
+                                                          isCheckIn: true,
+                                                          isCheckOut: true,
+                                                          customerName:
+                                                              startItem[0]
+                                                                  .customerName,
+                                                          meetingPoints:
+                                                              meetPointctr.text,
+                                                          checkOutTime:
+                                                              "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                                                          purpose: startItem[0]
+                                                              .purpose,
+                                                          checkOutLatitude: lat,
+                                                          checkOutLongitude:
+                                                              long,
+                                                          checkInLatitude:
+                                                              startItem[0]
+                                                                  .checkInLatitude,
+                                                          checkInLongitude:
+                                                              startItem[0]
+                                                                  .checkInLongitude,
+                                                          startKm: startItem[0]
+                                                              .startKm,
+                                                          endKm: int.tryParse(
+                                                                  endKm.text) ??
+                                                              0);
+                                                      kmsBloc.add(
+                                                          AddVisitsEvent(
+                                                              checkinstartModel,
+                                                              checkin: false));
+                                                    }, okText: "End");
+                                                  } else {}
+                                                },
+                                                okText: "Submit",
+                                                notefield: Form(
+                                                  key: endKey,
+                                                  child: TextFormField(
+                                                    controller: endKm,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    autovalidateMode:
+                                                        AutovalidateMode
+                                                            .onUserInteraction,
+                                                    maxLines: 1,
+                                                    validator: (value) {
+                                                      if ((value?.isEmpty ??
+                                                          true)) {
+                                                        return "End km required";
+                                                      } else if (((int.tryParse(
+                                                                  endKm.text) ??
+                                                              0) <
+                                                          startItem[0]
+                                                              .startKm)) {
+                                                        return "End km should be greater than start km";
+                                                      }
+                                                      return null;
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5.0),
+                                                        borderSide:
+                                                            const BorderSide(
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5.0),
+                                                        borderSide: BorderSide(
+                                                          color: HexColor(
+                                                              "#135a92"),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }, Colors.red)
+                                        ],
+                                      ),
+                                    ],
+                                  )
                               ],
                             ),
                           ),
@@ -464,30 +625,101 @@ class _IntroScreenState extends State<IntroScreen> {
               return Center(
                 child: button("Start", () {
                   DialogWidget().dialogWidget(
-                      navigatorKey.currentContext!,
-                      "Are you sure you want to start?",
-                      () => navigatorKey.currentState?.pop(), () {
-                    navigatorKey.currentState?.pop();
-                    checkinstartModel = CheckinstartModel(
-                        id: "00000000-0000-0000-0000-000000000000",
-                        userId: "no",
-                        date:
-                            "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                        checkInTime:
-                            "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                        isCheckIn: true,
-                        isCheckOut: false,
-                        customerName: "start",
-                        meetingPoints: "start",
-                        checkOutTime:
-                            "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
-                        purpose: "start",
-                        checkOutLatitude: 0,
-                        checkOutLongitude: 0,
-                        checkInLatitude: lat,
-                        checkInLongitude: long);
-                    kmsBloc.add(AddVisitsEvent(checkinstartModel));
-                  }, okText: "Start");
+                    navigatorKey.currentContext!,
+                    "Enter Start Km",
+                    () {
+                      navigatorKey.currentState?.pop();
+
+                      startKm.clear();
+                    },
+                    () {
+                      if (startKey.currentState?.validate() ?? false) {
+                        DialogWidget().dialogWidget(
+                            navigatorKey.currentContext!,
+                            "Are you sure you want to start?",
+                            () => navigatorKey.currentState?.pop(), () {
+                          navigatorKey.currentState?.pop();
+                          navigatorKey.currentState?.pop();
+                          checkinstartModel = CheckinstartModel(
+                              id: "00000000-0000-0000-0000-000000000000",
+                              userId: "no",
+                              date:
+                                  "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                              checkInTime:
+                                  "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                              isCheckIn: true,
+                              isCheckOut: false,
+                              customerName: "start",
+                              meetingPoints: "start",
+                              checkOutTime:
+                                  "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                              purpose: "start",
+                              checkOutLatitude: 0,
+                              checkOutLongitude: 0,
+                              checkInLatitude: lat,
+                              checkInLongitude: long,
+                              startKm: int.tryParse(startKm.text) ?? 0,
+                              endKm: 0);
+                          kmsBloc.add(AddVisitsEvent(checkinstartModel));
+                        }, okText: "Start");
+                      }
+                    },
+                    okText: "Submit",
+                    notefield: Form(
+                      key: startKey,
+                      child: TextFormField(
+                        controller: startKm,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        maxLines: 1,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if ((value?.isEmpty ?? true)) {
+                            return "Start km required";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: HexColor("#135a92"),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                  // DialogWidget().dialogWidget(
+                  //     navigatorKey.currentContext!,
+                  //     "Are you sure you want to start?",
+                  //     () => navigatorKey.currentState?.pop(), () {
+                  //   navigatorKey.currentState?.pop();
+                  //   checkinstartModel = CheckinstartModel(
+                  //       id: "00000000-0000-0000-0000-000000000000",
+                  //       userId: "no",
+                  //       date:
+                  //           "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                  //       checkInTime:
+                  //           "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                  //       isCheckIn: true,
+                  //       isCheckOut: false,
+                  //       customerName: "start",
+                  //       meetingPoints: "start",
+                  //       checkOutTime:
+                  //           "${DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(DateTime.now())}Z",
+                  //       purpose: "start",
+                  //       checkOutLatitude: 0,
+                  //       checkOutLongitude: 0,
+                  //       checkInLatitude: lat,
+                  //       checkInLongitude: long);
+                  //   kmsBloc.add(AddVisitsEvent(checkinstartModel));
+                  // }, okText: "Start");
                 }, Colors.green),
               );
             }

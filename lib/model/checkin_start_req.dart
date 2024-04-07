@@ -14,6 +14,8 @@ class CheckinstartModel {
     this.checkOutLatitude,
     this.checkOutLongitude,
     this.checkOutTime,
+    this.startKm,
+    this.endKm,
   });
   String? id;
   String? userId;
@@ -29,6 +31,8 @@ class CheckinstartModel {
   double? checkOutLatitude;
   double? checkOutLongitude;
   String? checkOutTime;
+  int? startKm;
+  int? endKm;
 
   CheckinstartModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -45,6 +49,8 @@ class CheckinstartModel {
     checkOutLatitude = json['checkOutLatitude'];
     checkOutLongitude = json['checkOutLongitude'];
     checkOutTime = json['checkOutTime'];
+    endKm = json['endKm'];
+    startKm = json['startKm'];
   }
 
   Map<String, dynamic> toJson() {
@@ -63,6 +69,8 @@ class CheckinstartModel {
     datas['checkOutLatitude'] = checkOutLatitude;
     datas['checkOutLongitude'] = checkOutLongitude;
     datas['checkOutTime'] = checkOutTime;
+    datas['startKm'] = startKm;
+    datas['endKm'] = endKm;
     return datas;
   }
 }
