@@ -457,11 +457,7 @@ class _IntroScreenState extends State<IntroScreen> {
                                             children: [
                                               const TextWidget("Date : "),
                                               TextWidget(
-                                                DateFormat("dd-MM-yyyy hh:mm a")
-                                                    .format(DateTime.parse(
-                                                            item[index]
-                                                                .checkInTime)
-                                                        .toLocal()),
+                                                item[index].checkInTimeAsString,
                                                 fontweight: FontWeight.bold,
                                               )
                                             ],
@@ -487,11 +483,7 @@ class _IntroScreenState extends State<IntroScreen> {
                                             children: [
                                               const TextWidget("Date : "),
                                               TextWidget(
-                                                DateFormat("dd-MM-yyyy hh:mm a")
-                                                    .format(DateTime.parse(
-                                                            item[index]
-                                                                .checkInTime)
-                                                        .toLocal()),
+                                                item[index].checkInTimeAsString,
                                                 fontweight: FontWeight.bold,
                                               ),
                                             ],
