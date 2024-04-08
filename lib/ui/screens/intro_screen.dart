@@ -443,7 +443,7 @@ class _IntroScreenState extends State<IntroScreen> {
                                       SizedBox(
                                         height: 5.w,
                                       ),
-                                      Row(
+                                      Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
@@ -452,6 +452,9 @@ class _IntroScreenState extends State<IntroScreen> {
                                               const TextWidget("Purpose : "),
                                               TextWidget(item[index].purpose)
                                             ],
+                                          ),
+                                          SizedBox(
+                                            height: 5.w,
                                           ),
                                           Row(
                                             children: [
@@ -510,6 +513,8 @@ class _IntroScreenState extends State<IntroScreen> {
                                                         () => navigatorKey
                                                             .currentState
                                                             ?.pop(), () {
+                                                      navigatorKey.currentState
+                                                          ?.pop();
                                                       navigatorKey.currentState
                                                           ?.pop();
                                                       checkinstartModel = CheckinstartModel(
