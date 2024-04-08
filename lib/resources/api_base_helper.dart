@@ -28,7 +28,7 @@ class ApiBaseHelper {
     String token = prefs.getString("token") ?? "";
 
     var response = await http.post(
-      Uri.parse("https://swastikapi.azurewebsites.net/api$url"),
+      Uri.parse("https://swastikapi.rentalsoftware.in/api$url"),
       headers: {
         'Authorization': "Bearer $token",
         /*   "Access-Control-Allow-Origin":
@@ -52,7 +52,7 @@ class ApiBaseHelper {
     String token = prefs.getString("token") ?? "";
     print(token);
     var response = await http.put(
-      Uri.parse("https://swastikapi.azurewebsites.net/api$url"),
+      Uri.parse("https://swastikapi.rentalsoftware.in/api$url"),
       headers: {
         'Authorization': "Bearer $token",
         /*   "Access-Control-Allow-Origin":
@@ -74,7 +74,7 @@ class ApiBaseHelper {
     String token = prefs.getString("token") ?? "";
     print(token);
     var response = await http.delete(
-      Uri.parse("https://swastikapi.azurewebsites.net/api$url"),
+      Uri.parse("https://swastikapi.rentalsoftware.in/api$url"),
       headers: {
         'Authorization': "Bearer $token",
         "Content-Type": 'application/json'
@@ -161,7 +161,7 @@ class ApiBaseHelper {
     String token = prefs.getString("token") ?? "";
     print(token);
     var response = await http.get(
-        Uri.parse("https://swastikapi.azurewebsites.net/api$url"),
+        Uri.parse("https://swastikapi.rentalsoftware.in/api$url"),
         headers: {'Authorization': "Bearer $token"});
     handleResponse(response);
     return response;
@@ -181,7 +181,7 @@ class ApiBaseHelper {
       "Content-Type": 'multipart/form-data'
     };
 
-    var uri = Uri.parse("https://swastikapi.azurewebsites.net/api$url");
+    var uri = Uri.parse("https://swastikapi.rentalsoftware.in/api$url");
 
     var multipartRequest = http.MultipartRequest("POST", uri);
 
